@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { push } from "connected-react-router";
 import * as actions from "../../store/actions";
 import './Login.scss';
-
+import {handleLogin} from '../../services'
+import { notification } from 'antd';
 
 
 
@@ -31,8 +32,35 @@ class Login extends Component {
             
         })
      }
-    handleLogin = () => {
-        
+     openNotification = (type, message, des) => {
+        notification[type]({
+            message,
+            des,
+            placement: "topRight",
+            duration: 3,
+        });
+
+     };
+    handleLogin = async () => {
+        try {
+            const res = await handleLogin(this.state.username, this.state.password);
+            console.log(res);
+            
+            if(res.errCode === 0) {
+                this.props.userLoginSuccess(res.user);
+                this.openNotification("success",res.errMessage)
+            } else if (res.errCode === -1) {
+                this.openNotification("error", res.errMessage)
+            } 
+            else {
+                this.openNotification("error", res.errMessage);
+            }
+        } catch(error) {
+            console.error("Login Error:", error.data);
+            this.openNotification("error", "Không được để trống Email/Password", "Có lỗi xảy ra, vui lòng thử lại sau.");
+            
+            
+        }
         
         
     }
@@ -117,8 +145,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         navigate: (path) => dispatch(push(path)),
-        adminLoginSuccess: (adminInfo) => dispatch(actions.adminLoginSuccess(adminInfo)),
-        adminLoginFail: () => dispatch(actions.adminLoginFail()),
+        // adminLoginSuccess: (adminInfo) => dispatch(actions.adminLoginSuccess(adminInfo)),
+        // adminLoginFail: () => dispatch(actions.adminLoginFail()),
+        
+        userLoginSuccess: (userInfo) => dispatch(actions.userLoginSuccess(userInfo)),
+        
     };
 };
 
