@@ -32,10 +32,10 @@ class Login extends Component {
             
         })
      }
-     openNotification = (type, message, des) => {
+     openNotification = (type, message, description) => {
         notification[type]({
             message,
-            des,
+            description,
             placement: "topRight",
             duration: 3,
         });
@@ -104,9 +104,9 @@ class Login extends Component {
                                     onClick={() => {this.handleShowPass()}}
                                 >   
                                     {this.state.isShowPassword ? 
-                                        <i class="fas fa-eye-slash"></i>
+                                        <i className="fas fa-eye-slash"></i>
                                         :  
-                                        <i class="far fa-eye"></i>
+                                        <i className="far fa-eye"></i>
 
                                     } 
 

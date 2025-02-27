@@ -20,7 +20,7 @@ class System extends Component {
                 </div>
             </div>
         );
-    }
+    }3
 }
 
 const mapStateToProps = state => {
