@@ -20,6 +20,9 @@
         "mental-healths": "Mental Health",
         "dental-checkups": "Dental Examinations"
     },
+    "search": {
+        "search-doctor": "Find a medical specialist"
+    },
     "common": {
         "add": "Add",
         "edit": "Edit",

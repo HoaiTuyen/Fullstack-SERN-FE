@@ -56,6 +56,9 @@
             }
             .language-en {
                 cursor: pointer;
+                &.active {
+                    color: #49bce2;
+                }
             }
 
         }
