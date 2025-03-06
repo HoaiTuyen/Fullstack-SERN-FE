@@ -6,15 +6,38 @@ import { FormattedMessage, injectIntl } from "react-intl";
 import { LANGUAGES } from "../../utils/constant";
 import { changeLanguageApp } from "../../store/actions";
 class HomeHeader extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isScroll: false,
+    };
+  }
+  componentDidMount() {
+    window.addEventListener("scroll", this.handleScroll);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+  handleScroll = () => {
+    console.log(window.scrollY);
+    if (window.scrollY > 50) {
+      this.setState({ isScroll: true });
+    } else {
+      this.setState({ isScroll: false });
+    }
+  };
   changeLanguage = (language) => {
     this.props.changeLanguageAppRedux(language);
   };
   render() {
-    const { intl } = this.props;
     let language = this.props.language;
     return (
       <>
-        <div className="home-header-container">
+        <div
+          className={`home-header-container ${
+            this.state.isScroll ? "scroll" : ""
+          }`}
+        >
           <div className="home-header-content">
             <div className="left-content">
               <i className="fas fa-bars"></i>
@@ -105,12 +128,7 @@ class HomeHeader extends Component {
           </div>
           <div className="search">
             <i className="fas fa-search"></i>
-            <input
-              type="text"
-              placeholder={intl.formatMessage({
-                id: "search.search-doctor",
-              })}
-            />
+            <input ff />
           </div>
           <div className="content-down">
             <div className="options">
