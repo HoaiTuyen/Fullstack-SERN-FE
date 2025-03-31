@@ -35,3 +35,6 @@ export const editUserAPI = async (data) => {
 export const getAllCodeService = async (data) => {
   return await axios.get(`/api/allcode?type=${data}`);
 };
+export const getTopDoctorHome = async (limit) => {
+  return await axios.get(`/api/top-doctor-home?limit=${limit}`);
+};

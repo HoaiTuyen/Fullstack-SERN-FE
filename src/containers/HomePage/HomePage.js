@@ -5,6 +5,7 @@ import HomeHeader from "./HomeHeader";
 import Specialty from "./Section/Specialty";
 import MedicalFacility from "./Section/MedicalFacility";
 import OutstandingDoctor from "./Section/outstandingDoctor";
+
 import HandBook from "./Section/HandBook";
 import About from "./Section/About";
 import HomeFooter from "./HomeFooter";
@@ -15,7 +16,7 @@ class HomePage extends Component {
   render() {
     let settings = {
       dots: false,
-      isFinite: true,
+      infinite: false,
       speed: 500,
       slidesToShow: 4,
       slidesToScroll: 1,
@@ -26,6 +27,7 @@ class HomePage extends Component {
         <Specialty settings={settings} />
         <MedicalFacility settings={settings} />
         <OutstandingDoctor settings={settings} />
+
         <HandBook settings={settings} />
         <About />
         <HomeFooter />

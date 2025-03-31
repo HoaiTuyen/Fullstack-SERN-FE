@@ -24,7 +24,10 @@
     "search": {
         "search-doctor": "Find a medical specialist"
     },
-
+    "doctor-home": {
+        "outstanding-doctor": "Featured Doctor of the Week",
+        "more": "See more"
+    },
 
     "menu": {
         "system": {

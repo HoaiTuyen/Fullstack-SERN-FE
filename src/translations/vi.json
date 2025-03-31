@@ -24,7 +24,10 @@
     "search": {
         "search-doctor": "Tìm chuyên khoa khám bệnh"
     },
-
+    "doctor-home": {
+        "outstanding-doctor": "Bác sĩ nổi bật trong tuần",
+        "more": "Xem thêm"
+    },
 
     "menu": {
         "system": {

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { FormattedMessage } from "react-intl";
 import { connect } from "react-redux";
 import { notification, Spin } from "antd";
-import { LANGUAGES, CRUD_ACTION } from "../../../utils/constant";
+import { LANGUAGES, CRUD_ACTION, CommonUtils } from "../../../utils";
 import * as actions from "../../../store/actions";
 import ModalImage from "react-modal-image";
 import "./UserRedux.scss";
@@ -42,21 +42,21 @@ class UserRedux extends Component {
       let arrGender = this.props.genderRedux;
       this.setState({
         genderArr: this.props.genderRedux,
-        gender: arrGender && arrGender.length > 0 ? arrGender[0].key : "",
+        gender: arrGender && arrGender.length > 0 ? arrGender[0].keyMap : "",
       });
     }
     if (prevProps.positionRedux !== this.props.positionRedux) {
       let arrPos = this.props.positionRedux;
       this.setState({
         positionArr: this.props.positionRedux,
-        position: arrPos && arrPos.length > 0 ? arrPos[0].key : "",
+        position: arrPos && arrPos.length > 0 ? arrPos[0].keyMap : "",
       });
     }
     if (prevProps.roleRedux !== this.props.roleRedux) {
       let arrRole = this.props.roleRedux;
       this.setState({
         roleArr: this.props.roleRedux,
-        role: arrRole && arrRole.length > 0 ? arrRole[0].key : "",
+        role: arrRole && arrRole.length > 0 ? arrRole[0].keyMap : "",
       });
     }
     if (prevProps.listUser !== this.props.listUser) {
@@ -70,21 +70,24 @@ class UserRedux extends Component {
         lastName: "",
         phoneNumber: "",
         address: "",
-        gender: arrGender && arrGender.length > 0 ? arrGender[0].key : "",
-        position: arrPos && arrPos.length > 0 ? arrPos[0].key : "",
-        role: arrRole && arrRole.length > 0 ? arrRole[0].key : "",
+        gender: arrGender && arrGender.length > 0 ? arrGender[0].keyMap : "",
+        position: arrPos && arrPos.length > 0 ? arrPos[0].keyMap : "",
+        role: arrRole && arrRole.length > 0 ? arrRole[0].keyMap : "",
         avatar: "",
         action: CRUD_ACTION.CREATE,
+        previewImgUrl: "",
       });
     }
   }
-  handleOnChangeImage = (e) => {
+  handleOnChangeImage = async (e) => {
     let dataFile = e.target.files[0];
     if (dataFile) {
+      let base64 = await CommonUtils.getBase64(dataFile);
+
       let objUrl = URL.createObjectURL(dataFile);
       this.setState({
         previewImgUrl: objUrl,
-        avatar: dataFile,
+        avatar: base64,
       });
     }
   };
@@ -155,6 +158,7 @@ class UserRedux extends Component {
         gender: this.state.gender,
         roleId: this.state.role,
         positionId: this.state.position,
+        avatar: this.state.avatar,
       });
       this.props.getAllUserRedux();
 
@@ -172,7 +176,7 @@ class UserRedux extends Component {
         gender: this.state.gender,
         roleId: this.state.role,
         positionId: this.state.position,
-        //avatar: this.state.avatar,
+        avatar: this.state.avatar,
       });
       this.props.getAllUserRedux();
       this.openNotification("success", "Update User Successfully");
@@ -188,20 +192,32 @@ class UserRedux extends Component {
   handleEditParent = (user) => {
     console.log(user);
 
-    this.setState({
-      email: user.email,
-      password: "encrypted password",
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phoneNumber: user.phoneNumber,
-      address: user.address,
-      gender: user.gender,
-      position: user.positionId,
-      role: user.roleId,
-      avatar: user.avatar,
-      action: CRUD_ACTION.EDIT,
-      userEditId: user.id,
-    });
+    let imageBase64 = "";
+    if (user.image) {
+      imageBase64 = new Buffer(user.image, "base64").toString("binary");
+      console.log(imageBase64);
+    }
+
+    this.setState(
+      {
+        email: user.email,
+        password: "encrypted password",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
+        gender: user.gender,
+        position: user.positionId,
+        role: user.roleId,
+        previewImgUrl: imageBase64,
+        avatar: "",
+        action: CRUD_ACTION.EDIT,
+        userEditId: user.id,
+      },
+      () => {
+        console.log(user);
+      }
+    );
   };
   render() {
     const {
@@ -319,7 +335,7 @@ class UserRedux extends Component {
                       genderArr.length > 0 &&
                       genderArr.map((item, index) => {
                         return (
-                          <option key={index} value={item.key}>
+                          <option key={index} value={item.keyMap}>
                             {language === LANGUAGES.VI
                               ? item.valueVi
                               : item.valueEn}
@@ -341,7 +357,7 @@ class UserRedux extends Component {
                       positionArr.length > 0 &&
                       positionArr.map((item, index) => {
                         return (
-                          <option key={index} value={item.key}>
+                          <option key={index} value={item.keyMap}>
                             {language === LANGUAGES.VI
                               ? item.valueVi
                               : item.valueEn}
@@ -363,7 +379,7 @@ class UserRedux extends Component {
                       roleArr.length > 0 &&
                       roleArr.map((item, index) => {
                         return (
-                          <option key={index} value={item.key}>
+                          <option key={index} value={item.keyMap}>
                             {language === LANGUAGES.VI
                               ? item.valueVi
                               : item.valueEn}
