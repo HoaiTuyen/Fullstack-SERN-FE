@@ -6,7 +6,10 @@ import {
   deleteUserAPI,
   editUserAPI,
   getTopDoctorHome,
+  getAllDoctor,
+  saveDetailInfoDoctor,
 } from "../../services/userService";
+import { toast } from "react-toastify";
 export const fetchGenderStart = () => {
   return async (dispatch, getState) => {
     try {
@@ -185,6 +188,51 @@ export const fetchTopDoctor = () => {
     } catch (e) {
       dispatch({
         type: actionTypes.FETCH_TOP_DOCTOR_FAILED,
+      });
+    }
+  };
+};
+export const fetchAllDoctor = () => {
+  return async (dispatch, getState) => {
+    try {
+      let allDoctor = await getAllDoctor();
+      if (allDoctor && allDoctor.errCode === 0) {
+        dispatch({
+          type: actionTypes.FETCH_ALL_DOCTOR_SUCCESS,
+          data: allDoctor.data,
+        });
+      } else {
+        dispatch({
+          type: actionTypes.FETCH_ALL_DOCTOR_FAILED,
+        });
+      }
+    } catch (e) {
+      dispatch({
+        type: actionTypes.FETCH_ALL_DOCTOR_FAILED,
+      });
+    }
+  };
+};
+export const saveDetailDoctor = (data) => {
+  return async (dispatch, getState) => {
+    try {
+      let infoDoctor = await saveDetailInfoDoctor(data);
+      console.log(infoDoctor);
+      if (infoDoctor && infoDoctor.errCode === 0) {
+        toast.success(infoDoctor.errMessage);
+        dispatch({
+          type: actionTypes.FETCH_SAVE_DETAIL_DOCTOR_SUCCESS,
+        });
+      } else {
+        toast.error(infoDoctor.errMessage);
+        dispatch({
+          type: actionTypes.FETCH_SAVE_DETAIL_DOCTOR_FAILED,
+        });
+      }
+    } catch (e) {
+      toast.error(e);
+      dispatch({
+        type: actionTypes.FETCH_SAVE_DETAIL_DOCTOR_FAILED,
       });
     }
   };

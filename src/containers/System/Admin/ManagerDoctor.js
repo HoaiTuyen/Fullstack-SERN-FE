@@ -3,20 +3,15 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import "./TableUser.scss";
 import * as actions from "../../../store/actions";
-import { Modal, notification } from "antd";
+import { Modal } from "antd";
 import MarkdownIt from "markdown-it";
 import MdEditor from "react-markdown-editor-lite";
-
+import { LANGUAGES } from "../../../utils";
 import "react-markdown-editor-lite/lib/index.css";
 import Select from "react-select";
 import "./ManagerDoctor.scss";
 const mdParser = new MarkdownIt(/* Markdown-it options */);
 
-const options = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-];
 class ManagerDoctor extends Component {
   constructor(props) {
     super(props);
@@ -25,34 +20,48 @@ class ManagerDoctor extends Component {
       contentHTML: "",
       selectedDoctor: "",
       description: "",
+      listDoctor: [],
     };
   }
-  openNotification = (type, message, description) => {
-    if (type === "error") {
-      notification.error({
-        message: message,
-        description: description,
-        placement: "topRight",
-        duration: 3,
-      });
-    } else if (type === "success") {
-      notification.success({
-        message: message,
-        description: description,
-        placement: "topRight",
-        duration: 3,
-      });
-    } else {
-      notification.info({
-        message: message,
-        description: description,
-        placement: "topRight",
-        duration: 3,
+
+  componentDidMount() {
+    this.props.fetchAllDoctor();
+  }
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.allDoctor !== this.props.allDoctor) {
+      let dataSelect = this.buildDataSelect(this.props.allDoctor);
+
+      this.setState({
+        listDoctor: dataSelect,
       });
     }
+    if (prevProps.language !== this.props.language) {
+      let dataSelect = this.buildDataSelect(this.props.allDoctor);
+
+      this.setState({
+        listDoctor: dataSelect,
+      });
+    }
+  }
+  buildDataSelect = (input) => {
+    let result = [];
+    let { language } = this.props;
+
+    if (input && input.length > 0) {
+      input.map((item, index) => {
+        let object = {};
+        let labelVi = `${item.lastName} ${item.firstName}`;
+        let labelEn = `${item.firstName} ${item.lastName}`;
+
+        object.label = language === LANGUAGES.VI ? labelVi : labelEn;
+        object.value = item.id;
+
+        result.push(object);
+      });
+    }
+
+    return result;
   };
-  componentDidMount() {}
-  componentDidUpdate(prevProps, prevState, snapshot) {}
   handleDelete = (id) => {
     Modal.confirm({
       title: "Confirm Delete",
@@ -76,7 +85,20 @@ class ManagerDoctor extends Component {
       contentHTML: html,
     });
   };
-  handleSaveContentMarkdown = () => {};
+  handleSaveContentMarkdown = () => {
+    this.props.saveDetailDoctor({
+      contentHTML: this.state.contentHTML,
+      contentMarkdown: this.state.contentMarkdown,
+      description: this.state.description,
+      doctorId: this.state.selectedDoctor.value,
+    });
+    this.setState({
+      contentMarkdown: "",
+      contentHTML: "",
+      selectedDoctor: "",
+      description: "",
+    });
+  };
   handleChange = (selectedDoctor) => {
     this.setState({ selectedDoctor }, () =>
       console.log(`Option selected:`, this.state.selectedDoctor)
@@ -88,6 +110,8 @@ class ManagerDoctor extends Component {
     });
   };
   render() {
+    const { listDoctor } = this.state;
+
     return (
       <div className="manager-doctor-container">
         <div className="manage-doctor-title">Tạo thêm thông tin bác sĩ</div>
@@ -97,7 +121,7 @@ class ManagerDoctor extends Component {
             <Select
               value={this.state.selectedDoctor}
               onChange={this.handleChange}
-              options={options}
+              options={listDoctor}
             />
           </div>
           <div className="content-right">
@@ -107,9 +131,7 @@ class ManagerDoctor extends Component {
               rows="4"
               onChange={(e) => this.handleOnChangeDesc(e)}
               value={this.state.description}
-            >
-              Đời mà
-            </textarea>
+            ></textarea>
           </div>
         </div>
         <div className="manage-doctor-editor">
@@ -132,15 +154,16 @@ class ManagerDoctor extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    listUser: state.admin.users,
+    allDoctor: state.admin.allDoctor,
     isLoadingUser: state.admin.isLoadingUser,
+    language: state.app.language,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getAllUserRedux: () => dispatch(actions.fetchAllUserStart()),
-    deleteUserRedux: (id) => dispatch(actions.deleteUser(id)),
+    fetchAllDoctor: () => dispatch(actions.fetchAllDoctor()),
+    saveDetailDoctor: (data) => dispatch(actions.saveDetailDoctor(data)),
   };
 };
 

@@ -38,3 +38,12 @@ export const getAllCodeService = async (data) => {
 export const getTopDoctorHome = async (limit) => {
   return await axios.get(`/api/top-doctor-home?limit=${limit}`);
 };
+export const getAllDoctor = async () => {
+  return await axios.get(`/api/get-all-doctor`);
+};
+export const saveDetailInfoDoctor = async (data) => {
+  return await axios.post("/api/save-info-doctor", data);
+};
+export const getDetailInfoDoctor = async (doctorId) => {
+  return await axios.get(`/api/get-detail-doctoc-by-id?id=${doctorId}`);
+};
